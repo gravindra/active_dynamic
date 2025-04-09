@@ -128,7 +128,8 @@ module ActiveDynamic
     def save_dynamic_attributes
       dynamic_attributes.each do |field|
         next unless _custom_fields[field.name]
-        attr = active_dynamic_attributes.find_or_initialize_by(field.as_json)
+        # Remove created_at and updated_at while initializing failed with rails 6.1.7
+        attr = active_dynamic_attributes.find_or_initialize_by(field.as_json.except('created_at', 'updated_at'))
         if persisted?
           attr.update(value: _custom_fields[field.name])
         else
